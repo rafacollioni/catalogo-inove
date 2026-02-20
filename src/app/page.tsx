@@ -66,10 +66,11 @@ export default async function Home({
 
               <Link
                 href="/login"
-                className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
-                title="Área Administrativa"
+                className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-full text-sm font-bold uppercase hover:bg-blue-800 transition-colors shadow-sm whitespace-nowrap"
+                title="Acessar Área Administrativa"
               >
-                <Lock size={20} />
+                <Lock size={16} />
+                <span>Área Administrativa</span>
               </Link>
             </div>
           </div>
