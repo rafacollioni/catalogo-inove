@@ -13,14 +13,14 @@ export default function ProductCard({ product }: { product: Product }) {
     const cores = metadados?.cores as string[] || []
 
     return (
-        <div className="bg-white border-b border-gray-100 py-12 last:border-0">
+        <div className="bg-white border-b border-gray-100 py-6 last:border-0">
             <div className="flex flex-col md:flex-row gap-8">
 
                 {/* Coluna Esquerda: Título, Linha e Descrição */}
                 <div className="flex-grow md:w-2/3">
                     <div className="mb-4">
                         <h3 className="text-2xl font-black text-blue-900 uppercase leading-none tracking-tight">
-                            INOVE® {product.nome}
+                            {product.nome}
                         </h3>
                         <div className="h-1 w-full bg-blue-900 mt-2"></div>
                     </div>

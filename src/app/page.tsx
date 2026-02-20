@@ -38,7 +38,15 @@ export default async function Home({
 
 
   const categories = [
-    'Toalhas', 'Guardanapos', 'Papel Higiênico', 'Sabonete', 'Acessórios', 'Químicos'
+    'Toalhas para Mãos',
+    'Guardanapos',
+    'Papel Higiênico',
+    'Sabonete e Higiene',
+    'Químicos Concentrados',
+    'Químicos Pronto Uso',
+    'Acessórios e Dispensers',
+    'Sacos de Lixo',
+    'Panos e Wipers'
   ]
 
   return (
@@ -111,7 +119,7 @@ export default async function Home({
         ) : (
           <div className="max-w-5xl mx-auto">
             {/* max-w-5xl para não ficar muito largo na lista horizontal */}
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-8">
               {produtos && produtos.length > 0 ? (
                 produtos.map((product) => (
                   <ProductCard key={product.id} product={product} />

@@ -148,17 +148,14 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">Nome do Produto</label>
-                        <div className="relative flex items-center">
-                            <span className="absolute left-3 text-gray-400 font-bold select-none">INOVE®</span>
-                            <input
-                                required
-                                type="text"
-                                value={formData.nome}
-                                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                                className="w-full rounded-md border border-gray-300 pl-20 pr-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-900 placeholder-gray-400"
-                                placeholder="DISPENSER TOALHA..."
-                            />
-                        </div>
+                        <input
+                            required
+                            type="text"
+                            value={formData.nome}
+                            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-900 placeholder-gray-400"
+                            placeholder="Ex: INOVE® DISPENSER..."
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -179,12 +176,15 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
                                 onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-900 bg-white"
                             >
-                                <option value="Toalhas">Toalhas</option>
+                                <option value="Toalhas para Mãos">Toalhas para Mãos</option>
                                 <option value="Guardanapos">Guardanapos</option>
                                 <option value="Papel Higiênico">Papel Higiênico</option>
-                                <option value="Sabonete">Sabonete</option>
-                                <option value="Acessórios">Acessórios</option>
-                                <option value="Químicos">Químicos</option>
+                                <option value="Sabonete e Higiene">Sabonete e Higiene</option>
+                                <option value="Químicos Concentrados">Químicos Concentrados</option>
+                                <option value="Químicos Pronto Uso">Químicos Pronto Uso</option>
+                                <option value="Acessórios e Dispensers">Acessórios e Dispensers</option>
+                                <option value="Sacos de Lixo">Sacos de Lixo</option>
+                                <option value="Panos e Wipers">Panos e Wipers</option>
                             </select>
                         </div>
                     </div>
