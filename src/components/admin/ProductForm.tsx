@@ -107,6 +107,58 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
         }
     }
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+
+
+        // Convert metadata array back to object
+        const metadadosObject = metadata.reduce((acc, curr) => {
+            if (curr.key.trim() && curr.value.trim()) {
+                acc[curr.key.trim()] = curr.value.trim()
+            }
+            return acc
+        }, {} as Record<string, any>)
+
+        // Include cores and codigos_cores from formData
+        if ((formData.metadados as any)?.cores) {
+            metadadosObject.cores = (formData.metadados as any).cores
+        }
+        if ((formData.metadados as any)?.codigos_cores) {
+            metadadosObject.codigos_cores = (formData.metadados as any).codigos_cores
+        }
+
+        try {
+            const productData = {
+                ...formData,
+                metadados: metadadosObject,
+            }
+
+            if (product) {
+                // Update
+                const { error } = await (supabase
+                    .from('produtos') as any)
+                    .update(productData)
+                    .eq('id', product.id)
+                if (error) throw error
+            } else {
+                // Insert
+                const { error } = await (supabase
+                    .from('produtos') as any)
+                    .insert(productData)
+                if (error) throw error
+            }
+
+            router.push('/admin')
+            router.refresh()
+        } catch (error) {
+            alert('erro ao salvar produto')
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <form
             onSubmit={handleSubmit}
