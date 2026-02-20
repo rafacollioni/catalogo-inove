@@ -29,7 +29,8 @@ export default async function Home({
   }
 
   if (category) {
-    request = request.eq('categoria', category)
+    // Using ilike for case-insensitive matching to avoid issues with capitalization
+    request = request.ilike('categoria', category)
   }
 
   const { data, error } = await request
