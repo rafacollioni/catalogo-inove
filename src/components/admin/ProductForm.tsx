@@ -37,9 +37,11 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
         metadados: (product?.metadados as any) || {}
     })
 
-    // Parse existing metadata if any
+    // Parse existing metadata if any, filtering out complex objects (cores, codigos_cores)
     const initialMetadata = product?.metadados
-        ? Object.entries(product.metadados as Record<string, string>).map(([key, value]) => ({ key, value }))
+        ? Object.entries(product.metadados as Record<string, any>)
+            .filter(([key, value]) => key !== 'cores' && key !== 'codigos_cores' && typeof value === 'string')
+            .map(([key, value]) => ({ key, value: String(value) }))
         : []
 
     const [metadata, setMetadata] = useState<{ key: string; value: string }[]>(initialMetadata)
@@ -114,7 +116,7 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
 
         // Convert metadata array back to object
         const metadadosObject = metadata.reduce((acc, curr) => {
-            if (curr.key.trim() && curr.value.trim()) {
+            if (curr.key && curr.key.trim() && curr.value && typeof curr.value === 'string') {
                 acc[curr.key.trim()] = curr.value.trim()
             }
             return acc
