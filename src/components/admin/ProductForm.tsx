@@ -59,15 +59,11 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
         setMetadata(newMetadata)
     }
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadFile = async (file: File) => {
         try {
             setUploading(true)
-            if (!e.target.files || e.target.files.length === 0) {
-                throw new Error('selecione uma imagem')
-            }
 
-            const file = e.target.files[0]
-            const fileExt = file.name.split('.').pop()
+            const fileExt = file.name.split('.').pop() || 'png'
             const fileName = `${Math.random()}.${fileExt}`
             const filePath = `${fileName}`
 
@@ -81,7 +77,7 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
 
             const { data } = supabase.storage.from('produtos').getPublicUrl(filePath)
 
-            setFormData({ ...formData, foto_url: data.publicUrl })
+            setFormData(prev => ({ ...prev, foto_url: data.publicUrl }))
         } catch (error) {
             alert('erro ao fazer upload da imagem')
             console.error(error)
@@ -90,60 +86,33 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
         }
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-
-
-        // Convert metadata array back to object
-        const metadadosObject = metadata.reduce((acc, curr) => {
-            if (curr.key.trim() && curr.value.trim()) {
-                acc[curr.key.trim()] = curr.value.trim()
-            }
-            return acc
-        }, {} as Record<string, any>)
-
-        // Include cores and codigos_cores from formData
-        if ((formData.metadados as any)?.cores) {
-            metadadosObject.cores = (formData.metadados as any).cores
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            return
         }
-        if ((formData.metadados as any)?.codigos_cores) {
-            metadadosObject.codigos_cores = (formData.metadados as any).codigos_cores
-        }
+        await uploadFile(e.target.files[0])
+    }
 
-        try {
-            const productData = {
-                ...formData,
-                metadados: metadadosObject,
+    const handlePaste = async (e: React.ClipboardEvent) => {
+        const items = e.clipboardData.items
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                e.preventDefault()
+                const file = items[i].getAsFile()
+                if (file) {
+                    await uploadFile(file)
+                    return
+                }
             }
-
-            if (product) {
-                // Update
-                const { error } = await (supabase
-                    .from('produtos') as any)
-                    .update(productData)
-                    .eq('id', product.id)
-                if (error) throw error
-            } else {
-                // Insert
-                const { error } = await (supabase
-                    .from('produtos') as any)
-                    .insert(productData)
-                if (error) throw error
-            }
-
-            router.push('/admin')
-            router.refresh()
-        } catch (error) {
-            alert('erro ao salvar produto')
-            console.error(error)
-        } finally {
-            setLoading(false)
         }
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm max-w-3xl mx-auto">
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm max-w-3xl mx-auto"
+            onPaste={handlePaste}
+        >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                     <div>
@@ -207,7 +176,10 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
 
                 <div className="space-y-4">
                     <label className="block text-sm font-bold text-gray-700 mb-1 uppercase tracking-wide">Imagem do Produto</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition-colors relative h-64">
+                    <div
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition-colors relative h-64 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        tabIndex={0}
+                    >
                         {formData.foto_url ? (
                             <div className="relative w-full h-full">
                                 <img
@@ -227,9 +199,12 @@ export default function ProductForm({ product, onSuccess }: { product?: Product,
                             <div className="flex flex-col items-center">
                                 <UploadCloud className="h-12 w-12 text-gray-400 mb-2" />
                                 <p className="text-sm text-gray-500">
-                                    <span className="font-semibold text-blue-600">Clique para upload</span> ou arraste e solte
+                                    <span className="font-semibold text-blue-600">Clique para upload</span>
                                 </p>
-                                <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP (max. 2MB)</p>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    ou dê <span className="font-bold bg-gray-100 px-1 rounded text-gray-700">Ctrl+V</span> para colar
+                                </p>
+                                <p className="text-xs text-gray-400 mt-2">PNG, JPG, WEBP (max. 2MB)</p>
                                 <input
                                     type="file"
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
